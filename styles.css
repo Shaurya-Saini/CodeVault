@@ -475,9 +475,26 @@ textarea {
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: #888;
+  color: var(--text-secondary);
+  transition: color 0.2s, transform 0.2s;
 }
 
 .pin-btn .fas {
-  color: #f39c12; /* Gold for pinned snippets */
+  color: inherit;
+}
+
+/* Pinned state */
+.pin-btn.pinned {
+  color: #f39c12;
+  transform: rotate(45deg); 
+}
+
+/* Hover effect for better interactivity */
+.pin-btn:hover {
+  color: #f39c12;
+}
+
+/* Ensure the pinned state doesn't change color on hover */
+.pin-btn.pinned:hover {
+  color: #f39c12;
 }
