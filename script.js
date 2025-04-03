@@ -87,25 +87,28 @@ function renderSnippets() {
     snippetCard.className = 'snippet-card';
 
     snippetCard.innerHTML = `
-  <div class="snippet-header">
-    <div class="snippet-title">${snippet.title}</div>
-    <div class="snippet-category">${snippet.category}</div>
-    <button class="pin-btn ${snippet.pinned ? 'pinned' : ''}" onclick="togglePin('${snippet.id}')">
-      <i class="fas fa-thumbtack"></i>
-    </button>
-  </div>
-  <div class="snippet-content">
-    <pre><code class="language-${snippet.category.toLowerCase()}">${escapeHtml(snippet.code)}</code></pre>
-  </div>
-  <div class="snippet-actions">
-    <button class="secondary-btn" onclick="editSnippet('${snippet.id}')">
-      <i class="fas fa-edit"></i> Edit
-    </button>
-    <button class="secondary-btn" onclick="deleteSnippet('${snippet.id}')">
-      <i class="fas fa-trash"></i> Delete
-    </button>
-  </div>
-`;
+    <div class="snippet-header">
+      <div class="snippet-title">${snippet.title}</div>
+      <div class="snippet-category">${snippet.category}</div>
+      <button class="pin-btn ${snippet.pinned ? 'pinned' : ''}" onclick="togglePin('${snippet.id}')">
+        <i class="fas fa-thumbtack"></i>
+      </button>
+    </div>
+    <div class="snippet-content">
+      <pre><code class="language-${snippet.category.toLowerCase()}">${escapeHtml(snippet.code)}</code></pre>
+    </div>
+    <div class="snippet-actions">
+      <button class="secondary-btn copy-btn" onclick="copyToClipboard('${snippet.id}')">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+      <button class="secondary-btn" onclick="editSnippet('${snippet.id}')">
+        <i class="fas fa-edit"></i> Edit
+      </button>
+      <button class="secondary-btn" onclick="deleteSnippet('${snippet.id}')">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    </div>
+  `;
 
 
     snippetsGrid.appendChild(snippetCard);
@@ -255,11 +258,6 @@ function toggleTheme() {
 function toggleSidebar() {
   sidebar.classList.toggle('active');
 }
-
-// Make functions available globally for onclick handlers
-window.editSnippet = editSnippet;
-window.deleteSnippet = deleteSnippet; 
-
 function togglePin(id) {
   const snippet = snippets.find(s => s.id === id);
   if (snippet) {
@@ -274,3 +272,30 @@ function saveSnippetsToStorage() {
 }
 
 
+function copyToClipboard(id) {
+  const snippet = snippets.find(s => s.id === id);
+  if (snippet) {
+    navigator.clipboard.writeText(snippet.code)
+      .then(() => {
+        // Optional: Show feedback to user
+        const button = document.querySelector(`.snippet-card button[onclick="copyToClipboard('${id}')"]`);
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.disabled = true;
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }, 2000);
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy code to clipboard');
+      });
+  }
+}
+
+// Make functions available globally for onclick handlers
+window.editSnippet = editSnippet;
+window.deleteSnippet = deleteSnippet; 
+window.copyToClipboard = copyToClipboard;

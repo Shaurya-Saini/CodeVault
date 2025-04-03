@@ -475,26 +475,37 @@ textarea {
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: var(--text-secondary);
+  color: var(--text-secondary); /* Gray color for unpinned state */
   transition: color 0.2s, transform 0.2s;
 }
 
 .pin-btn .fas {
-  color: inherit;
+  color: inherit; /* Inherit color from parent */
 }
 
 /* Pinned state */
 .pin-btn.pinned {
-  color: #f39c12;
-  transform: rotate(45deg); 
+  color: #f39c12; /* Gold for pinned state */
+  transform: rotate(45deg); /* Optional: Rotate the pin to indicate it's "stuck" */
 }
 
 /* Hover effect for better interactivity */
 .pin-btn:hover {
-  color: #f39c12;
+  color: #f39c12; /* Gold on hover for unpinned state */
 }
 
 /* Ensure the pinned state doesn't change color on hover */
 .pin-btn.pinned:hover {
-  color: #f39c12;
+  color: #f39c12; /* Keep gold color when pinned */
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.copy-btn:disabled {
+  background-color: #28a745; /* Green color for success feedback */
+  opacity: 1;
 }
