@@ -67,6 +67,8 @@ function renderSnippets() {
       snippet.category === activeCategory
     );
   }
+//make sure pinned comments show up first
+  filteredSnippets.sort((a,b)=>b.pinned-a.pinned);
 
   snippetsGrid.innerHTML = '';
 
@@ -85,22 +87,26 @@ function renderSnippets() {
     snippetCard.className = 'snippet-card';
 
     snippetCard.innerHTML = `
-      <div class="snippet-header">
-        <div class="snippet-title">${snippet.title}</div>
-        <div class="snippet-category">${snippet.category}</div>
-      </div>
-      <div class="snippet-content">
-        <pre><code class="language-${snippet.category.toLowerCase()}">${escapeHtml(snippet.code)}</code></pre>
-      </div>
-      <div class="snippet-actions">
-        <button class="secondary-btn" onclick="editSnippet('${snippet.id}')">
-          <i class="fas fa-edit"></i> Edit
-        </button>
-        <button class="secondary-btn" onclick="deleteSnippet('${snippet.id}')">
-          <i class="fas fa-trash"></i> Delete
-        </button>
-      </div>
-    `;
+  <div class="snippet-header">
+    <div class="snippet-title">${snippet.title}</div>
+    <div class="snippet-category">${snippet.category}</div>
+    <button class="pin-btn ${snippet.pinned ? 'pinned' : ''}" onclick="togglePin('${snippet.id}')">
+      <i class="fas fa-thumbtack"></i>
+    </button>
+  </div>
+  <div class="snippet-content">
+    <pre><code class="language-${snippet.category.toLowerCase()}">${escapeHtml(snippet.code)}</code></pre>
+  </div>
+  <div class="snippet-actions">
+    <button class="secondary-btn" onclick="editSnippet('${snippet.id}')">
+      <i class="fas fa-edit"></i> Edit
+    </button>
+    <button class="secondary-btn" onclick="deleteSnippet('${snippet.id}')">
+      <i class="fas fa-trash"></i> Delete
+    </button>
+  </div>
+`;
+
 
     snippetsGrid.appendChild(snippetCard);
 
@@ -214,12 +220,19 @@ function saveSnippet() {
     const id = snippetIdInput.value;
     const index = snippets.findIndex(s => s.id === id);
     if (index !== -1) {
-      snippets[index] = { id, title, category, code };
+      snippets[index] = { 
+        id, 
+        title, 
+        category, 
+        code, 
+        pinned: snippets[index].pinned // Preserve pinned status 
+      };
     }
   } else {
     const id = Date.now().toString();
-    snippets.push({ id, title, category, code });
+    snippets.push({ id, title, category, code, pinned: false }); // Default pinned: false
   }
+  
 
   saveSnippetsToStorage();
   renderSnippets();
@@ -246,3 +259,18 @@ function toggleSidebar() {
 // Make functions available globally for onclick handlers
 window.editSnippet = editSnippet;
 window.deleteSnippet = deleteSnippet; 
+
+function togglePin(id) {
+  const snippet = snippets.find(s => s.id === id);
+  if (snippet) {
+    snippet.pinned = !snippet.pinned;
+    saveSnippetsToStorage();
+    renderSnippets();
+  }
+}
+
+function saveSnippetsToStorage() {
+  localStorage.setItem('codeSnippets', JSON.stringify(snippets));
+}
+
+

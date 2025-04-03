@@ -469,3 +469,15 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.pin-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #888;
+}
+
+.pin-btn .fas {
+  color: #f39c12; /* Gold for pinned snippets */
+}
