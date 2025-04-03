@@ -25,6 +25,7 @@ let activeCategory = 'all';
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  loadSnippets();
   renderSnippets();
   loadTheme();
   updateCategoryList();
@@ -41,10 +42,20 @@ saveSnippetBtn.addEventListener('click', saveSnippet);
 toggleSidebarBtn.addEventListener('click', toggleSidebar);
 
 // Functions
+function loadSnippets() {
+  const storedSnippets = localStorage.getItem('codeSnippets');
+  snippets = storedSnippets ? JSON.parse(storedSnippets) : [];
+}
+
+function saveSnippetsToStorage() {
+  localStorage.setItem('codeSnippets', JSON.stringify(snippets));
+}
+
 function renderSnippets() {
   const searchTerm = searchInput.value.toLowerCase();
   let filteredSnippets = snippets;
   
+  // Filter by search term
   if (searchTerm) {
     filteredSnippets = filteredSnippets.filter(snippet => 
       snippet.title.toLowerCase().includes(searchTerm) || 
@@ -52,6 +63,7 @@ function renderSnippets() {
     );
   }
   
+  // Filter by active category
   if (activeCategory !== 'all') {
     filteredSnippets = filteredSnippets.filter(snippet => 
       snippet.category === activeCategory
@@ -95,11 +107,15 @@ function renderSnippets() {
 }
 
 function updateCategoryList() {
+  // Get unique categories
   const categories = [...new Set(snippets.map(snippet => snippet.category))];
+  
+  // Clear existing categories except "All Snippets"
   const allCategoriesItem = categoryList.querySelector('[data-category="all"]');
   categoryList.innerHTML = '';
   categoryList.appendChild(allCategoriesItem);
   
+  // Add categories to the list
   categories.forEach(category => {
     if (category) {
       const li = document.createElement('li');
@@ -115,6 +131,7 @@ function updateCategoryList() {
     }
   });
   
+  // Add event listener to "All Snippets"
   allCategoriesItem.addEventListener('click', () => {
     setActiveCategory('all');
   });
@@ -122,6 +139,8 @@ function updateCategoryList() {
 
 function setActiveCategory(category) {
   activeCategory = category;
+  
+  // Update active class
   document.querySelectorAll('.category-list li').forEach(item => {
     if (item.getAttribute('data-category') === category) {
       item.classList.add('active');
@@ -129,6 +148,7 @@ function setActiveCategory(category) {
       item.classList.remove('active');
     }
   });
+  
   renderSnippets();
 }
 
@@ -166,6 +186,7 @@ function editSnippet(id) {
 function deleteSnippet(id) {
   if (confirm('Are you sure you want to delete this snippet?')) {
     snippets = snippets.filter(snippet => snippet.id !== id);
+    saveSnippetsToStorage();
     renderSnippets();
     updateCategoryList();
   }
@@ -196,6 +217,7 @@ function saveSnippet() {
     snippets.push({ id, title, category, code });
   }
 
+  saveSnippetsToStorage();
   renderSnippets();
   updateCategoryList();
   closeModal();
@@ -217,5 +239,6 @@ function toggleSidebar() {
   sidebar.classList.toggle('active');
 }
 
+// Make functions available globally for onclick handlers
 window.editSnippet = editSnippet;
 window.deleteSnippet = deleteSnippet;
