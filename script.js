@@ -54,16 +54,14 @@ function saveSnippetsToStorage() {
 function renderSnippets() {
   const searchTerm = searchInput.value.toLowerCase();
   let filteredSnippets = snippets;
-  
-  // Filter by search term
+
   if (searchTerm) {
     filteredSnippets = filteredSnippets.filter(snippet => 
       snippet.title.toLowerCase().includes(searchTerm) || 
       snippet.category.toLowerCase().includes(searchTerm)
     );
   }
-  
-  // Filter by active category
+
   if (activeCategory !== 'all') {
     filteredSnippets = filteredSnippets.filter(snippet => 
       snippet.category === activeCategory
@@ -81,17 +79,18 @@ function renderSnippets() {
     `;
     return;
   }
-
+  
   filteredSnippets.forEach(snippet => {
     const snippetCard = document.createElement('div');
     snippetCard.className = 'snippet-card';
+
     snippetCard.innerHTML = `
       <div class="snippet-header">
         <div class="snippet-title">${snippet.title}</div>
         <div class="snippet-category">${snippet.category}</div>
       </div>
       <div class="snippet-content">
-        <pre class="snippet-code">${escapeHtml(snippet.code)}</pre>
+        <pre><code class="language-${snippet.category.toLowerCase()}">${escapeHtml(snippet.code)}</code></pre>
       </div>
       <div class="snippet-actions">
         <button class="secondary-btn" onclick="editSnippet('${snippet.id}')">
@@ -102,7 +101,12 @@ function renderSnippets() {
         </button>
       </div>
     `;
+
     snippetsGrid.appendChild(snippetCard);
+
+    // Highlight the code block
+    const codeBlock = snippetCard.querySelector('pre code');
+    hljs.highlightElement(codeBlock);
   });
 }
 
@@ -241,4 +245,4 @@ function toggleSidebar() {
 
 // Make functions available globally for onclick handlers
 window.editSnippet = editSnippet;
-window.deleteSnippet = deleteSnippet;
+window.deleteSnippet = deleteSnippet; 
