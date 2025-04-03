@@ -50,13 +50,20 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-  width: var(--sidebar-width);
+  width: 250px; /* Sidebar width */
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border);
-  height: 100%;
-  transition: transform var(--transition-speed);
+  height: 100vh; /* Full height */
+  position: fixed;
+  top: 0;
+  left: -250px; /* Start off-screen */
+  transition: transform 0.3s ease-in-out;
   overflow-y: auto;
   z-index: 10;
+}
+
+.sidebar.active{
+transform: translateX(250px); /* Slide in */
 }
 
 .sidebar-header {
@@ -73,12 +80,20 @@ body {
 }
 
 .toggle-sidebar {
+  position: fixed;  /* Fix position so it doesn’t shift */
+  top: 20px;
+  left: 20px; /* Align near sidebar */
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   cursor: pointer;
-  display: none;
+  z-index: 1100;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.active + .toggle-sidebar {
+  transform: translateX(180px); /* Move along with sidebar */
 }
 
 .sidebar-content {
@@ -188,6 +203,8 @@ header {
   height: var(--header-height);
   box-shadow: 0 2px 5px var(--shadow);
   z-index: 5;
+  width: 100%;
+  height: 70px;
 }
 
 .header-content {
@@ -202,6 +219,7 @@ h1 {
   font-size: 1.5rem;
   color: var(--accent);
   white-space: nowrap;
+  padding-left: 250px;
 }
 
 .search-container {
@@ -281,6 +299,7 @@ h1 {
   display: flex;
   flex-direction: column;
   transition: transform 0.2s, box-shadow 0.2s;
+  max-height: 500px;
 }
 
 .snippet-card:hover {
@@ -430,6 +449,9 @@ textarea {
 }
 
 .empty-state {
+  position: absolute;
+  height: 75%;
+  width: 100%;
   text-align: center;
   padding: 3rem 1rem;
   color: var(--text-secondary);

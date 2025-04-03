@@ -257,6 +257,12 @@ function toggleTheme() {
 
 function toggleSidebar() {
   sidebar.classList.toggle('active');
+  
+  if (sidebar.classList.contains("active")) {
+    toggleSidebarBtn.style.transform = "translateX(180px)";
+  } else {
+    toggleSidebarBtn.style.transform = "translateX(0)";
+  }
 }
 function togglePin(id) {
   const snippet = snippets.find(s => s.id === id);
