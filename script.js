@@ -17,6 +17,7 @@ const titleInput = document.getElementById('title');
 const categoryInput = document.getElementById('category');
 const codeInput = document.getElementById('code');
 const categoryList = document.getElementById('category-list');
+const contentArea = document.getElementById('main-content');
 
 // State
 let snippets = [];
@@ -260,8 +261,10 @@ function toggleSidebar() {
   
   if (sidebar.classList.contains("active")) {
     toggleSidebarBtn.style.transform = "translateX(180px)";
+    contentArea.style.marginLeft = "250px";
   } else {
     toggleSidebarBtn.style.transform = "translateX(0)";
+    contentArea.style.marginLeft = "0px";
   }
 }
 function togglePin(id) {
